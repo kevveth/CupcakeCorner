@@ -11,6 +11,8 @@ struct CheckoutView: View {
     var order: Order
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
+    @State private var errorMessage = ""
+    @State private var showingError = false
     
     var body: some View {
         ScrollView {
@@ -38,9 +40,14 @@ struct CheckoutView: View {
         .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)
         .alert("Thank you!", isPresented: $showingConfirmation) {
-            Button("OK") {}
+            Button("OK") { }
         } message: {
             Text(confirmationMessage)
+        }
+        .alert("There's trouble!", isPresented: $showingError) {
+            Button("Ok") { }
+        } message: {
+            Text(errorMessage)
         }
     }
     
@@ -63,6 +70,8 @@ struct CheckoutView: View {
             showingConfirmation = true
         } catch {
             print("Check out failed: \(error.localizedDescription)")
+            errorMessage = "Check out failed: \(error.localizedDescription)"
+            showingError = true
         }
     }
 }
