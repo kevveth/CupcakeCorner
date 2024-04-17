@@ -21,6 +21,34 @@ class Order: Codable {
         case _zip = "zip"
     }
     
+    init() {
+        if let savedName = UserDefaults.standard.data(forKey: "name") {
+            if let decodedName = try? JSONDecoder().decode(String.self, from: savedName) {
+                name = decodedName
+            }
+        }
+        
+        if let savedAddress = UserDefaults.standard.data(forKey: "address") {
+            if let decodedAddress = try? JSONDecoder().decode(String.self, from: savedAddress) {
+                streetAddress = decodedAddress
+            }
+        }
+        
+        if let savedCity = UserDefaults.standard.data(forKey: "city") {
+            if let decodedCity = try? JSONDecoder().decode(String.self, from: savedCity) {
+                city = decodedCity
+            }
+        }
+        
+        if let savedZip = UserDefaults.standard.data(forKey: "zip") {
+            if let decodedZip = try? JSONDecoder().decode(String.self, from: savedZip) {
+                zip = decodedZip
+            }
+        }
+        
+        return
+    }
+    
     static let types = ["Strawberry", "Chocolate", "Vanilla", "Rainbow"]
     
     var type = 0
@@ -37,10 +65,37 @@ class Order: Codable {
     var extraFrosting = false
     var addSprinkles = false
     
-    var name = ""
-    var streetAddress = ""
-    var city = ""
-    var zip = ""
+    var name = "" {
+        didSet {
+            if let encoded = try? JSONEncoder().encode(name) {
+                UserDefaults.standard.set(encoded, forKey: "name")
+            }
+        }
+    }
+    
+    var streetAddress = "" {
+        didSet {
+            if let encoded = try? JSONEncoder().encode(streetAddress) {
+                UserDefaults.standard.set(encoded, forKey: "address")
+            }
+        }
+    }
+    
+    var city = "" {
+        didSet {
+            if let encoded = try? JSONEncoder().encode(city) {
+                UserDefaults.standard.set(encoded, forKey: "city")
+            }
+        }
+    }
+    
+    var zip = "" {
+        didSet {
+            if let encoded = try? JSONEncoder().encode(zip) {
+                UserDefaults.standard.set(encoded, forKey: "zip")
+            }
+        }
+    }
     
     var hasValidAddress: Bool {
         let trimmedAddress = streetAddress.trimmingCharacters(in: .whitespacesAndNewlines)
