@@ -22,31 +22,7 @@ class Order: Codable {
     }
     
     init() {
-        if let savedName = UserDefaults.standard.data(forKey: "name") {
-            if let decodedName = try? JSONDecoder().decode(String.self, from: savedName) {
-                name = decodedName
-            }
-        }
-        
-        if let savedAddress = UserDefaults.standard.data(forKey: "address") {
-            if let decodedAddress = try? JSONDecoder().decode(String.self, from: savedAddress) {
-                streetAddress = decodedAddress
-            }
-        }
-        
-        if let savedCity = UserDefaults.standard.data(forKey: "city") {
-            if let decodedCity = try? JSONDecoder().decode(String.self, from: savedCity) {
-                city = decodedCity
-            }
-        }
-        
-        if let savedZip = UserDefaults.standard.data(forKey: "zip") {
-            if let decodedZip = try? JSONDecoder().decode(String.self, from: savedZip) {
-                zip = decodedZip
-            }
-        }
-        
-        return
+        load()
     }
     
     static let types = ["Strawberry", "Chocolate", "Vanilla", "Rainbow"]
@@ -67,32 +43,46 @@ class Order: Codable {
     
     var name = "" {
         didSet {
-            if let encoded = try? JSONEncoder().encode(name) {
-                UserDefaults.standard.set(encoded, forKey: "name")
-            }
+            save()
         }
     }
     
     var streetAddress = "" {
         didSet {
-            if let encoded = try? JSONEncoder().encode(streetAddress) {
-                UserDefaults.standard.set(encoded, forKey: "address")
-            }
+            save()
         }
     }
     
     var city = "" {
         didSet {
-            if let encoded = try? JSONEncoder().encode(city) {
-                UserDefaults.standard.set(encoded, forKey: "city")
-            }
+            save()
         }
     }
     
     var zip = "" {
         didSet {
-            if let encoded = try? JSONEncoder().encode(zip) {
-                UserDefaults.standard.set(encoded, forKey: "zip")
+            save() 
+        }
+    }
+    
+    private func save() {
+        if let encoded = try? JSONEncoder().encode(self) {
+            UserDefaults.standard.set(encoded, forKey: "OrderData")
+        }
+    }
+    
+    private func load() {
+        if let data = UserDefaults.standard.data(forKey: "OrderData") {
+            do {
+                let decodedOrder = try JSONDecoder().decode(Order.self, from: data)
+                
+                //Assign decoded properties to self
+                self.name = decodedOrder.name
+                self.streetAddress = decodedOrder.streetAddress
+                self.city = decodedOrder.city
+                self.zip = decodedOrder.zip
+            } catch {
+                
             }
         }
     }
